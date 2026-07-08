@@ -6,6 +6,7 @@ install:
 
 build:
 	rm -rf frontend/dist
+	npm install --prefix frontend
 	npm run build --prefix frontend
 
 start-backend:
