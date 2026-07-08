@@ -1,0 +1,47 @@
+import type { TFunction } from "i18next";
+import * as yup from "yup";
+
+const UsernameLength = {
+  MIN: 3,
+  MAX: 20,
+};
+
+const PasswordLength = {
+  MIN: 6,
+};
+
+const createValidationSchema = (t: TFunction<"translation", undefined>) =>
+  yup.object({
+    username: yup
+      .string()
+      .test(
+        "len",
+        t("page-singup.usernameMinMax", {
+          min: UsernameLength.MIN,
+          max: UsernameLength.MAX,
+        }),
+        (value) =>
+          !!(
+            value &&
+            value.length >= UsernameLength.MIN &&
+            value.length <= UsernameLength.MAX
+          ),
+      )
+      .matches(/^[a-zA-Z0-9_]+$/, t("page-singup.usernameMatches")),
+
+    password: yup.string().test(
+      "len",
+      t("page-singup.passwordMinMax", {
+        min: PasswordLength.MIN,
+      }),
+      (value) => !!(value && value.length >= PasswordLength.MIN),
+    ),
+
+    confirm: yup
+      .string()
+      .test("passwords-match", t("page-singup.confirmOneOf"), function (value) {
+        return !!(value && this.parent.password === value);
+      }),
+  });
+
+export { UsernameLength, PasswordLength, createValidationSchema };
